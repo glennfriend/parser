@@ -93,6 +93,7 @@ $info = $getInfo();
 echo '<pre>';
 echo '// 前面 1,2,3 不見了<br/>';
 foreach ( $info as $item ) {
+    echo "        ";
     echo "case ";
     if ( is_int($item['id']) ) {
         printf('% 6d', $item['id'] );
@@ -112,6 +113,7 @@ echo '</pre>';
 echo '<br/><br/><br/><br/><br/><br/>';
 echo '<pre>';
 foreach ( $info as $item ) {
+    echo "        ";
     echo "case ";
     if ( is_int($item['id']) ) {
         printf('% 6d', $item['id'] );
@@ -131,6 +133,7 @@ echo '</pre>';
 echo '<br/><br/><br/><br/><br/><br/>';
 echo '<pre>';
 foreach ( $info as $item ) {
+    echo "        ";
     echo "case ";
     if ( is_int($item['id']) ) {
         printf('% 6d', $item['id'] );
