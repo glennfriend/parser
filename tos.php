@@ -27,14 +27,41 @@ $getInfo = function() use ($doc)
     $data = array();
     $i=0;
     foreach ( $items as $item ) {
-    
+
         $row = array(
-            'link'  => pq($item)->find('a')->attr('href'),
             'id'    => null,
+            'link'  => pq($item)->find('a')->attr('href'),
             'title' => pq($item)->find('a')->attr('title'),
             'img'   => pq($item)->find('img:eq(1)')->attr('src'),
         );
 
+        // id, title filter
+        if ( substr($row['title'],0,3) == 'No.' ) {
+            $row['title'] = trim(substr( $row['title'], 3 ));
+        }
+        $tmp = explode( ' ', $row['title'] );
+        $row['id'] = strtolower(trim($tmp[0]));
+        if ( preg_match('/^[0-9]+$/', $row['id'] ) ) {
+            // id filter to int or not convert
+            $row['id'] = (int) $row['id'];
+        }
+        unset($tmp[0]);
+        $row['title'] = join(' ', $tmp );
+        unset($tmp);
+
+        // link filter
+        $row['link'] = 'http://zh.tos.wikia.com' . $row['link'];
+
+        // debug
+        //echo '<pre>'; print_r($row); exit;
+
+        // filter
+        if ( !$row['id'] ) {
+            continue;
+        }
+        if ( !$row['title'] ) {
+            continue;
+        }
 
         // 防呆
         if ( is_object($row['link']) ) {
@@ -46,22 +73,6 @@ $getInfo = function() use ($doc)
         if ( is_object($row['img']) ) {
             continue;
         }
-
-        // 防呆
-        if ( 'No.'!==substr($row['title'], 0, 3) ) {
-            continue;
-        }
-
-        // id, title filter
-        $tmp = substr( $row['title'], 3 );
-        $tmp = explode( ' ', $tmp );
-        $row['id'] = (int) $tmp[0];
-        unset($tmp[0]);
-        $row['title'] = join(' ', $tmp );
-
-        // link filter
-        $row['link'] = 'http://zh.tos.wikia.com' . $row['link'];
-
 
         // success data
         if ( $row ) {
@@ -83,7 +94,12 @@ echo '<pre>';
 echo '// 前面 1,2,3 不見了<br/>';
 foreach ( $info as $item ) {
     echo "case ";
-    printf('% 5d', $item['id'] );
+    if ( is_int($item['id']) ) {
+        printf('% 6d', $item['id'] );
+    }
+    else {
+        printf('% 6s', '"'.$item['id'].'"' );
+    }
     echo ": ";
     echo 'return "'. $item['title'] . '";';
     echo '<br/>';
@@ -97,7 +113,12 @@ echo '<br/><br/><br/><br/><br/><br/>';
 echo '<pre>';
 foreach ( $info as $item ) {
     echo "case ";
-    printf('% 5d', $item['id'] );
+    if ( is_int($item['id']) ) {
+        printf('% 6d', $item['id'] );
+    }
+    else {
+        printf('% 6s', '"'.$item['id'].'"' );
+    }
     echo ": ";
     echo 'return "'. $item['link'] . '";';
     echo '<br/>';
@@ -111,7 +132,12 @@ echo '<br/><br/><br/><br/><br/><br/>';
 echo '<pre>';
 foreach ( $info as $item ) {
     echo "case ";
-    printf('% 5d', $item['id'] );
+    if ( is_int($item['id']) ) {
+        printf('% 6d', $item['id'] );
+    }
+    else {
+        printf('% 6s', '"'.$item['id'].'"' );
+    }
     echo ": ";
     echo 'return "'. $item['img'] . '";';
     echo '<br/>';
